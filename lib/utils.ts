@@ -1,14 +1,3 @@
-// import { clsx, type ClassValue } from "clsx"
-// import { twMerge } from "tailwind-merge"
-
-// export function cn(...inputs: ClassValue[]) {
-//   return twMerge(clsx(inputs))
-// }
-
-
-
-/* eslint-disable prefer-const */
-/* eslint-disable no-prototype-builtins */
 import { type ClassValue, clsx } from "clsx";
 import qs from "qs";
 import { twMerge } from "tailwind-merge";
@@ -62,6 +51,12 @@ export const dataUrl = `data:image/svg+xml;base64,${toBase64(
 // ==== End
 
 // FORM URL QUERY
+interface FormUrlQueryParams {
+  searchParams: URLSearchParams;
+  key: string;
+  value: string | null;
+}
+
 export const formUrlQuery = ({
   searchParams,
   key,
@@ -75,6 +70,11 @@ export const formUrlQuery = ({
 };
 
 // REMOVE KEY FROM QUERY
+interface RemoveUrlQueryParams {
+  searchParams: string;
+  keysToRemove: string[];
+}
+
 export function removeKeysFromQuery({
   searchParams,
   keysToRemove,
@@ -94,19 +94,28 @@ export function removeKeysFromQuery({
 }
 
 // DEBOUNCE
-export const debounce = (func: (...args: any[]) => void, delay: number) => {
+export const debounce = (
+  func: (...args: unknown[]) => void,
+  delay: number
+) => {
   let timeoutId: NodeJS.Timeout | null;
-  return (...args: any[]) => {
+  return (...args: unknown[]) => {
     if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(null, args), delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 };
 
 // GE IMAGE SIZE
 export type AspectRatioKey = keyof typeof aspectRatioOptions;
+export interface Image {
+  aspectRatio?: AspectRatioKey;
+  width?: number;
+  height?: number;
+}
+
 export const getImageSize = (
   type: string,
-  image: any,
+  image: Image,
   dimension: "width" | "height"
 ): number => {
   if (type === "fill") {
@@ -140,22 +149,27 @@ export const download = (url: string, filename: string) => {
 };
 
 // DEEP MERGE OBJECTS
-export const deepMergeObjects = (obj1: any, obj2: any) => {
-  if(obj2 === null || obj2 === undefined) {
+type DeepMergeObject = Record<string, unknown>;
+
+export const deepMergeObjects = (obj1: DeepMergeObject, obj2: DeepMergeObject) => {
+  if (obj2 === null || obj2 === undefined) {
     return obj1;
   }
 
-  let output = { ...obj2 };
+  let output: DeepMergeObject = { ...obj2 };
 
   for (let key in obj1) {
-    if (obj1.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj1, key)) {
       if (
         obj1[key] &&
         typeof obj1[key] === "object" &&
         obj2[key] &&
         typeof obj2[key] === "object"
       ) {
-        output[key] = deepMergeObjects(obj1[key], obj2[key]);
+        output[key] = deepMergeObjects(
+          obj1[key] as DeepMergeObject,
+          obj2[key] as DeepMergeObject
+        );
       } else {
         output[key] = obj1[key];
       }
