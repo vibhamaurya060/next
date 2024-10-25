@@ -5,10 +5,7 @@ const MONGODB_URL = process.env.MONGODB_URL;
 // Define a custom interface for the global object to avoid 'any'
 declare global {
   // This declares that the global object has a 'mongoose' property of type MongooseConnection or undefined.
-  var mongoose: {
-    conn: Mongoose | null;
-    promise: Promise<Mongoose> | null;
-  } | undefined;
+  var mongoose: MongooseConnection | undefined;
 }
 
 interface MongooseConnection {
@@ -17,7 +14,7 @@ interface MongooseConnection {
 }
 
 // Use the declared global type instead of 'any'
-let cached: MongooseConnection = global.mongoose || { 
+const cached: MongooseConnection = global.mongoose || { 
   conn: null, 
   promise: null 
 };
@@ -40,5 +37,5 @@ export const connectToDatabase = async () => {
 
   cached.conn = await cached.promise;
 
-  return cached.conn; // conn --> connection
+  return cached.conn;
 };

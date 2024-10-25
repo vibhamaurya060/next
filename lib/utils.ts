@@ -156,9 +156,9 @@ export const deepMergeObjects = (obj1: DeepMergeObject, obj2: DeepMergeObject) =
     return obj1;
   }
 
-  let output: DeepMergeObject = { ...obj2 };
+  const output: DeepMergeObject = { ...obj2 };
 
-  for (let key in obj1) {
+  for (const key in obj1) {
     if (Object.prototype.hasOwnProperty.call(obj1, key)) {
       if (
         obj1[key] &&
