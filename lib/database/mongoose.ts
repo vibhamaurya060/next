@@ -5,7 +5,7 @@ const MONGODB_URL = process.env.MONGODB_URL;
 // Define a custom interface for the global object to avoid 'any'
 declare global {
   // This declares that the global object has a 'mongoose' property of type MongooseConnection or undefined.
-  var mongoose: MongooseConnection | undefined;
+  let mongoose: MongooseConnection | undefined;
 }
 
 interface MongooseConnection {
